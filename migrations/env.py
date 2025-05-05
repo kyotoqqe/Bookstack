@@ -10,6 +10,8 @@ from alembic import context
 
 from src.database.base import Base
 from src.database.config import DatabaseSettings
+
+from src.books.models import Books
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
