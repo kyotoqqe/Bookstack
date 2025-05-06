@@ -1,11 +1,9 @@
-from fastapi import APIRouter,Depends
+from fastapi import APIRouter
 
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-
+from src.books.repository import BooksRepository
 from src.books.schemas import Book,AddBook
-from src.books.models import Books
-from src.database.connection import get_session
+
+from typing import Optional
 
 router = APIRouter(
     prefix="/books",
@@ -13,18 +11,16 @@ router = APIRouter(
 )
 
 @router.get("/")
-async def get_books(session:AsyncSession=Depends(get_session)):
-    stmt = select(Books)
-    res = await session.execute(stmt)
-    books_models = res.scalars().all()
-    books_schemas:list[Book] = [Book.model_validate(book) for book in books_models]
-    return books_schemas
+async def get_books() -> list[Book]:
+    return await BooksRepository.get_all()
 
 @router.post("/add")
-async def add_book(data:AddBook, session:AsyncSession=Depends(get_session)):
-    book_as_dict = data.model_dump()
-    book = Books(**book_as_dict)
-    session.add(book)
-    session.flush()
-    await session.commit()
-    return book.id
+async def add_book(data:AddBook) -> int:
+    data_dict = data.model_dump()
+    return await BooksRepository.add_one(data_dict)
+
+#maybe rewrite on a isbn instead id
+@router.get("/{book_id}")
+async def get_one(book_id:int)->Optional[Book]:
+    return await BooksRepository.get_one_by_id(book_id)
+    
