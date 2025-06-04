@@ -1,7 +1,9 @@
 from typing import Optional
 from datetime import date
 
-from pydantic import BaseModel,Field
+from pydantic import BaseModel,Field, ConfigDict
+
+from src.books.schemas import Book
 
 class AddAuthor(BaseModel):
     first_name:str = Field(max_length=50)
@@ -13,3 +15,7 @@ class AddAuthor(BaseModel):
 
 class Author(AddAuthor):
     id:int
+    model_config = ConfigDict(from_attributes=True)
+
+class AuthorBooks(Author):
+    books:list[Optional[Book]]

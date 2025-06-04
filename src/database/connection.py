@@ -8,7 +8,7 @@ db_settings = DatabaseSettings()
 
 def create_db() -> AsyncEngine:
     url = db_settings.get_db_url
-    engine = create_async_engine(url=url)
+    engine = create_async_engine(url=url, echo=True)
     return engine
 
 engine = create_db()

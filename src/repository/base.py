@@ -17,13 +17,13 @@ class BaseRepository:
         async with async_session() as session:
             instance = cls.model(**data)
             session.add(instance)
-            session.flush()
+            await session.flush()
             await session.commit()
             return instance.id
 
     @classmethod
-    async def get_one_by_id(cls,id:int):
+    async def get_one_by_id(cls,id:int, stmt=None):
         async with async_session() as session:
-            stmt = select(cls.model).filter_by(id=id)
+            stmt = select(cls.model).filter_by(id=id) if stmt is None else stmt
             res = await session.execute(stmt)
             return res.scalars().one_or_none()

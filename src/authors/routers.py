@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from src.authors.schemas import AddAuthor, Author
+from src.authors.schemas import AddAuthor, Author, AuthorBooks
 from src.authors.repository import AuthorsRepository
 
 router = APIRouter(
@@ -17,8 +17,8 @@ async def get_one(author_id:int) -> Author:
     return await AuthorsRepository.get_one_by_id(author_id)
 
 @router.get("/{author_id}/all")
-async def get_all_authors_books(author_id:int):
-    pass
+async def get_all_authors_books(author_id:int) -> AuthorBooks:
+    return await AuthorsRepository.get_authors_books(author_id)
 
 @router.post("/add")
 async def add_one(data:AddAuthor) -> int:
